@@ -3,11 +3,11 @@
     public class Branch
     {
         public Guid Id { get; set; }
-        public required string Plz { get; set; }
-        public required string Firma { get; set; }
-        public required string Ort { get; set; }
+        public required string PostCode { get; set; }
+        public required string Name { get; set; }
+        public required string Location { get; set; }
         public required string Email { get; set; }
-        public required string Kanton { get; set; }
+        public required string Canton { get; set; }
         public required string Website { get; set; }
         public required string OpeningHours { get; set; }
         public required string Phone { get; set; }

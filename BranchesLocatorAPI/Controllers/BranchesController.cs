@@ -42,10 +42,10 @@ namespace BranchesLocatorAPI.Controllers
             var branchEntity = new Branch()
             {
                 Email = addBranchDto.Email,
-                Firma = addBranchDto.Firma,
-                Kanton = addBranchDto.Kanton,
-                Ort = addBranchDto.Ort,
-                Plz = addBranchDto.Plz,
+                Name = addBranchDto.Name,
+                Canton = addBranchDto.Canton,
+                Location = addBranchDto.Location,
+                PostCode = addBranchDto.PostCode,
                 Phone = addBranchDto.Phone,
                 OpeningHours = addBranchDto.OpeningHours,
                 Website = addBranchDto.Website,
@@ -69,12 +69,12 @@ namespace BranchesLocatorAPI.Controllers
             if (branch is null)
                 return NotFound();
 
-            branch.Firma = UpdateBranchDto.Firma;
-            branch.Plz = UpdateBranchDto.Plz;
-            branch.Ort = UpdateBranchDto.Ort;
+            branch.Name = UpdateBranchDto.Name;
+            branch.PostCode = UpdateBranchDto.PostCode;
+            branch.Location = UpdateBranchDto.Location;
             branch.Email = UpdateBranchDto.Email;
-            branch.Kanton = UpdateBranchDto.Kanton;
-            branch.Website = UpdateBranchDto.Firma;
+            branch.Canton = UpdateBranchDto.Canton;
+            branch.Website = UpdateBranchDto.Name;
             branch.OpeningHours = UpdateBranchDto.OpeningHours;
             branch.Phone = UpdateBranchDto.Phone;
             branch.Website = UpdateBranchDto.Website;
