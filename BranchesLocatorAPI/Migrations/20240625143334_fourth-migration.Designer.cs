@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BranchesLocatorAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240624145628_third migration")]
-    partial class thirdmigration
+    [Migration("20240625143334_fourth-migration")]
+    partial class fourthmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,15 +31,15 @@ namespace BranchesLocatorAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Base64Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Canton")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Lat")

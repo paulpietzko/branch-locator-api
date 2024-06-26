@@ -12,6 +12,6 @@
         public required string Phone { get; set; }
         public required double Lat { get; set; }
         public required double Lng { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? Base64Image { get; set; }
     }
 }

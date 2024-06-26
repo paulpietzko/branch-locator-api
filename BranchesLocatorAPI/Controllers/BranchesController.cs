@@ -51,7 +51,7 @@ namespace BranchesLocatorAPI.Controllers
                 Website = addBranchDto.Website,
                 Lat = addBranchDto.Lat,
                 Lng = addBranchDto.Lng,
-                ImageUrl = addBranchDto.ImageUrl
+                Base64Image = addBranchDto.Base64Image
             };
 
             dbContext.Branches.Add(branchEntity);
@@ -62,31 +62,30 @@ namespace BranchesLocatorAPI.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public IActionResult UpdateBranch(Guid id, UpdateBranchDto UpdateBranchDto)
+        public IActionResult UpdateBranch(Guid id, UpdateBranchDto updateBranchDto)
         {
             var branch = dbContext.Branches.Find(id);
 
             if (branch is null)
                 return NotFound();
 
-            branch.Name = UpdateBranchDto.Name;
-            branch.PostCode = UpdateBranchDto.PostCode;
-            branch.Location = UpdateBranchDto.Location;
-            branch.Email = UpdateBranchDto.Email;
-            branch.Canton = UpdateBranchDto.Canton;
-            branch.Website = UpdateBranchDto.Name;
-            branch.OpeningHours = UpdateBranchDto.OpeningHours;
-            branch.Phone = UpdateBranchDto.Phone;
-            branch.Website = UpdateBranchDto.Website;
-            branch.Lat = UpdateBranchDto.Lat;
-            branch.Lng = UpdateBranchDto.Lng;
-            branch.ImageUrl = UpdateBranchDto.ImageUrl;
+            branch.Name = updateBranchDto.Name;
+            branch.PostCode = updateBranchDto.PostCode;
+            branch.Location = updateBranchDto.Location;
+            branch.Email = updateBranchDto.Email;
+            branch.Canton = updateBranchDto.Canton;
+            branch.Website = updateBranchDto.Website;
+            branch.OpeningHours = updateBranchDto.OpeningHours;
+            branch.Phone = updateBranchDto.Phone;
+            branch.Lat = updateBranchDto.Lat;
+            branch.Lng = updateBranchDto.Lng;
+            branch.Base64Image = updateBranchDto.Base64Image;
 
             dbContext.SaveChanges();
 
             return Ok(branch);
         }
-        
+
         [HttpDelete]
         [Route("{id:guid}")]
         public IActionResult DeleteBranch(Guid id)
