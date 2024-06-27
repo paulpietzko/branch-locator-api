@@ -9,14 +9,10 @@ namespace BranchesLocatorAPI.Controllers
     // localhost:xxxx/api/branches
     [Route("api/[controller]")]
     [ApiController]
-    public class BranchesController : ControllerBase
+    public class BranchesController(ApplicationDbContext dbContext, IWebHostEnvironment webHostEnvironment) : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
-
-        public BranchesController(ApplicationDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
+        private readonly ApplicationDbContext dbContext = dbContext;
+        private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
 
         [HttpGet]
         public IActionResult GetAllBranches()
@@ -37,8 +33,19 @@ namespace BranchesLocatorAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddBranch(AddBranchDto addBranchDto)
+        public async Task<IActionResult> AddBranch([FromForm] AddBranchDto addBranchDto, IFormFile image)
         {
+            string? imagePath = null;
+            if (image != null)
+            {
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", image.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                imagePath = Path.Combine("images", image.FileName);
+            }
+
             var branchEntity = new Branch()
             {
                 Email = addBranchDto.Email,
@@ -51,7 +58,7 @@ namespace BranchesLocatorAPI.Controllers
                 Website = addBranchDto.Website,
                 Lat = addBranchDto.Lat,
                 Lng = addBranchDto.Lng,
-                Base64Image = addBranchDto.Base64Image
+                ImagePath = imagePath
             };
 
             dbContext.Branches.Add(branchEntity);
@@ -60,14 +67,23 @@ namespace BranchesLocatorAPI.Controllers
             return Ok(branchEntity);
         }
 
-        [HttpPut]
-        [Route("{id:guid}")]
-        public IActionResult UpdateBranch(Guid id, UpdateBranchDto updateBranchDto)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateBranch(Guid id, [FromForm] UpdateBranchDto updateBranchDto, IFormFile image)
         {
             var branch = dbContext.Branches.Find(id);
-
-            if (branch is null)
+            if (branch == null)
                 return NotFound();
+
+            string? imagePath = branch.ImagePath;
+            if (image != null)
+            {
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", image.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                imagePath = Path.Combine("images", image.FileName);
+            }
 
             branch.Name = updateBranchDto.Name;
             branch.PostCode = updateBranchDto.PostCode;
@@ -79,7 +95,7 @@ namespace BranchesLocatorAPI.Controllers
             branch.Phone = updateBranchDto.Phone;
             branch.Lat = updateBranchDto.Lat;
             branch.Lng = updateBranchDto.Lng;
-            branch.Base64Image = updateBranchDto.Base64Image;
+            branch.ImagePath = imagePath;
 
             dbContext.SaveChanges();
 
