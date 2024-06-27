@@ -38,12 +38,16 @@ namespace BranchesLocatorAPI.Controllers
             string? imagePath = null;
             if (image != null)
             {
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", image.FileName);
+                // Generate a unique filename using branch ID and original filename
+                var fileName = $"{Guid.NewGuid()}-{Path.GetFileName(image.FileName)}";
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", fileName);
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
                 }
-                imagePath = Path.Combine("images", image.FileName);
+
+                imagePath = Path.Combine("images", fileName);
             }
 
             var branchEntity = new Branch()
@@ -75,14 +79,29 @@ namespace BranchesLocatorAPI.Controllers
                 return NotFound();
 
             string? imagePath = branch.ImagePath;
+
             if (image != null)
             {
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", image.FileName);
+                // Generate a unique filename using branch ID and original filename
+                var fileName = $"{Guid.NewGuid()}-{Path.GetFileName(image.FileName)}";
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", fileName);
+
+                // Delete the old image if updating with a new one (optional, based on requirements)
+                if (!string.IsNullOrEmpty(branch.ImagePath))
+                {
+                    var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, branch.ImagePath.Replace('/', '\\'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
                 }
-                imagePath = Path.Combine("images", image.FileName);
+
+                imagePath = Path.Combine("images", fileName);
             }
 
             branch.Name = updateBranchDto.Name;
