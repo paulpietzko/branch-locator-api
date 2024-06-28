@@ -33,7 +33,7 @@ namespace BranchesLocatorAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBranch([FromForm] AddBranchDto addBranchDto, IFormFile image)
+        public async Task<IActionResult> AddBranch([FromForm] AddBranchDto addBranchDto, IFormFile? image)
         {
             string? imagePath = null;
             if (image != null)
@@ -72,7 +72,7 @@ namespace BranchesLocatorAPI.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateBranch(Guid id, [FromForm] UpdateBranchDto updateBranchDto, IFormFile image)
+        public async Task<IActionResult> UpdateBranch(Guid id, [FromForm] UpdateBranchDto updateBranchDto, IFormFile? image)
         {
             var branch = dbContext.Branches.Find(id);
             if (branch == null)
