@@ -121,16 +121,21 @@ namespace BranchesLocatorAPI.Controllers
             return Ok(branch);
         }
 
-        [HttpDelete]
-        [Route("{id:guid}")]
-        public IActionResult DeleteBranch(Guid id)
+        [HttpDelete("{id:guid}/image")]
+        public IActionResult DeleteImage(Guid id, [FromQuery] string imagePath)
         {
             var branch = dbContext.Branches.Find(id);
-
-            if (branch is null)
+            if (branch == null || string.IsNullOrEmpty(imagePath))
                 return NotFound();
 
-            dbContext.Branches.Remove(branch);
+            // Delete the image file
+            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, imagePath.Replace('/', '\\'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            branch.ImagePath = null;
             dbContext.SaveChanges();
 
             return Ok();
