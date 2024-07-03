@@ -32,6 +32,7 @@ namespace BranchesLocatorAPI.Controllers
             return Ok(branch);
         }
 
+        // single upload - works
         [HttpPost]
         public async Task<IActionResult> AddBranch([FromForm] AddBranchDto addBranchDto, IFormFile? image)
         {
@@ -69,6 +70,38 @@ namespace BranchesLocatorAPI.Controllers
             dbContext.SaveChanges();
 
             return Ok(branchEntity);
+        }
+
+        // multiple branches
+        [HttpPost("import")]
+        public async Task<IActionResult> AddBranches([FromBody] List<AddBranchDto> addBranchDtos)
+        {
+            foreach (var addBranchDto in addBranchDtos)
+            {
+                // Process each branchDto to create a Branch entity
+                // var imagePath = await SaveImageAsync(addBranchDtos.fileName);
+
+                var branchEntity = new Branch()
+                {
+                    Email = addBranchDto.Email,
+                    Name = addBranchDto.Name,
+                    Canton = addBranchDto.Canton,
+                    Location = addBranchDto.Location,
+                    PostCode = addBranchDto.PostCode,
+                    Phone = addBranchDto.Phone,
+                    OpeningHours = addBranchDto.OpeningHours,
+                    Website = addBranchDto.Website,
+                    Lat = addBranchDto.Lat,
+                    Lng = addBranchDto.Lng,
+                    // bImagePath = ''
+                };
+
+                dbContext.Branches.Add(branchEntity);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok("Batch import successful");
         }
 
         [HttpPut("{id:guid}")]
@@ -128,7 +161,6 @@ namespace BranchesLocatorAPI.Controllers
             if (branch == null || string.IsNullOrEmpty(imagePath))
                 return NotFound();
 
-            // Delete the image file
             var filePath = Path.Combine(_webHostEnvironment.WebRootPath, imagePath.Replace('/', '\\'));
             if (System.IO.File.Exists(filePath))
             {
@@ -141,5 +173,19 @@ namespace BranchesLocatorAPI.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public IActionResult DeleteBranch(Guid id)
+        {
+            var branch = dbContext.Branches.Find(id);
+
+            if (branch is null)
+                return NotFound();
+
+            dbContext.Branches.Remove(branch);
+            dbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 }
